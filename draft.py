@@ -1,3 +1,7 @@
+import json
+from datetime import date
+
+
 print("\nWelcome to cli draft tool\n")
 
 
@@ -16,8 +20,16 @@ def newDraft():
         club = input(f"Enter club for {name}: ")
         data[name]['club'] = club
         data[name]['team'] = []
+
     roundRobin(data, chutiye)
-    print(data)
+    fileName = createFileName(data)
+
+    with open(fileName, 'w', encoding='utf-8') as file:
+        json.dump(data, file, indent=4)
+    with open(fileName, 'r', encoding='utf-8') as file:
+        content = json.load(file)
+        print('data from the file:')
+        print(content)
 
 
 def roundRobin(dict, list):
@@ -33,6 +45,7 @@ def roundRobin(dict, list):
                 print(f"\nEnter player pick for {name}")
                 pick = input()
                 dict[name]['team'].append(pick)
+
         elif flag < 0:
             for name in reversed(list):
                 if dict[name]['draftCount'] == 0:
@@ -42,6 +55,7 @@ def roundRobin(dict, list):
                 print(f"\nEnter player pick for {name}")
                 pick = input()
                 dict[name]['team'].append(pick)
+
         else:
             print("breaking out of the while loop")
             break
@@ -49,7 +63,15 @@ def roundRobin(dict, list):
         flag = flag * -1
 
 
+def createFileName(data):  # should return a string
+    fileName = ""
+    for name in data:
+        fileName = fileName + name.capitalize() + '__'
 
+    today = date.today()
+    formatted_date_time = today.strftime("%Y-%m-%d")
+    fileName = fileName + formatted_date_time + ".json"
+    return fileName
 
 def main():
     print("Options-")
